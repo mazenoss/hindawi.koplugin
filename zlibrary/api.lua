@@ -32,14 +32,17 @@ function SafahatAPI:parseResults(data)
     
     local books = {}
     for _, item in ipairs(data.results) do
-        table.insert(books, {
-            id = item.id,
-            title = item.title,
-            author = item.author or "Unknown Author",
-            extension = item.file_extension or "pdf",
-            size = item.file_size or "Unknown Size",
-            download_url = BASE_URL .. item.download_path
-        })
+        -- Ensure an epub URL exists for this listing before including it
+        if item.download_epub then 
+            table.insert(books, {
+                id = item.id,
+                title = item.title,
+                author = item.author or "Unknown Author",
+                extension = "epub", -- Forces KOReader to handle it natively as an epub file
+                size = item.epub_size or "Unknown Size",
+                download_url = BASE_URL .. item.download_epub
+            })
+        end
     end
     return books
 end
